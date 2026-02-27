@@ -8,7 +8,7 @@ public class BankCardNumberValidator implements ConstraintValidator<ValidBankCar
     @Override
     public boolean isValid(String bankCardNumber, ConstraintValidatorContext context) {
 
-        if (bankCardNumber == null || !bankCardNumber.matches("\\d+")) {
+        if (bankCardNumber == null || !bankCardNumber.matches("[\\d-]+")) {
             return false;
         }
 

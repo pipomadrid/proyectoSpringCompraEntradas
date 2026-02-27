@@ -1,9 +1,13 @@
 package org.pedrosaez.proyectocompraentradas.purchase.controller;
 
 
+import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
-import org.pedrosaez.proyectocompraentradas.purchase.model.Purchase;
-import org.pedrosaez.proyectocompraentradas.purchase.model.response.PurchaseDTO;
+import org.pedrosaez.proyectocompraentradas.purchase.model.request.PurchaseRequestDTO;
+import org.pedrosaez.proyectocompraentradas.purchase.model.response.CBResponse;
+import org.pedrosaez.proyectocompraentradas.purchase.model.response.CustomPurchaseResponseDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.service.PurchaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +28,32 @@ public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
 
-
+    @CircuitBreaker(name = "purchaseCircuitBreaker", fallbackMethod = "fallBackCreatePurchase")
     @PostMapping
-    public ResponseEntity<?> createPurchase(@Valid @RequestBody PurchaseDTO purchaseDTO){
+    public ResponseEntity<?> createPurchase(@Valid @RequestBody PurchaseRequestDTO purchaseDTO){
 
         logger.info("------ createPurchase {} (POST)",purchaseDTO.getId());
-        Purchase result =  purchaseService.compraEntradas(purchaseDTO);
-        logger.info("------ Purchase {} created successfully", result.getId());
+        CustomPurchaseResponseDTO result =  purchaseService.compraEntradas(purchaseDTO);
+        logger.info("------ Purchase created successfully");
 
         return  ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    private ResponseEntity<CBResponse> serviceUnavailableResponse(String message) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new CBResponse(
+                        message,
+                        HttpStatus.SERVICE_UNAVAILABLE
+                ));
+    }
+
+    public ResponseEntity<CBResponse> fallBackCreatePurchase(PurchaseRequestDTO purchaseDTO, FeignException.InternalServerError e){
+        String message = "El servicio de compras inestable, pruebe de nuevo";
+        return serviceUnavailableResponse(message);
+    }
+
+    public ResponseEntity<CBResponse> fallBackCreatePurchase(PurchaseRequestDTO purchaseDTO, CallNotPermittedException e){
+        String message = "El servicio de compras no está disponible ahora mismo. Intenta más tarde.";
+        return serviceUnavailableResponse(message);
     }
 }

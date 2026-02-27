@@ -83,4 +83,18 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
 
     }
+
+    @ExceptionHandler(PurchaseException.class)
+    public ResponseEntity<Map<String, Object>> handlePurchaseException(PurchaseException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("code", ex.getCode());
+        body.put("message", ex.getMessage());
+
+        HttpStatus status = ex.getCode().startsWith("400")
+                ? HttpStatus.BAD_REQUEST
+                : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        return new ResponseEntity<>(body, status);
+    }
 }

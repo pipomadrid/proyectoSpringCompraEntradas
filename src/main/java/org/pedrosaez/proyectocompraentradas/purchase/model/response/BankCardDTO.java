@@ -1,17 +1,30 @@
 package org.pedrosaez.proyectocompraentradas.purchase.model.response;
 
+import jakarta.validation.constraints.*;
+import org.pedrosaez.proyectocompraentradas.validation.ValidBankCardExpiryDate;
+import org.pedrosaez.proyectocompraentradas.validation.ValidBankCardNumber;
+
 import java.io.Serializable;
 
+@ValidBankCardExpiryDate
 public class BankCardDTO implements Serializable {
 
-
-    private Long id;
+    @NotBlank
+    @Size(min = 2, max = 100)
     private String ownerName;
+
+    @ValidBankCardNumber
     private String cardNumber;
+
+    @NotNull
+    @Min(1)
+    @Max(12)
     private Integer expiryMonth;
     private Integer expiryYear;
+
+    @NotBlank
+    @Pattern(regexp = "\\d{3}", message = "El CVV debe tener 3 dígitos")
     private String cvv;
-    private PurchaseDTO purchaseDTO;
 
     public String getOwnerName() {
         return ownerName;
@@ -53,19 +66,4 @@ public class BankCardDTO implements Serializable {
         this.cvv = cvv;
     }
 
-    public PurchaseDTO getPurchaseDTO() {
-        return purchaseDTO;
-    }
-
-    public void setPurchaseDTO(PurchaseDTO purchaseDTO) {
-        this.purchaseDTO = purchaseDTO;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
