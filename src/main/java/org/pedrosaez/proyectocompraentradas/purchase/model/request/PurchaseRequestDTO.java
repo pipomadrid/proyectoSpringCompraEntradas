@@ -1,34 +1,37 @@
 package org.pedrosaez.proyectocompraentradas.purchase.model.request;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import org.pedrosaez.proyectocompraentradas.purchase.model.response.BankCardDTO;
 
 import java.io.Serializable;
 
+@Schema(description = "Datos necesarios para procesar una compra de entradas")
 public class PurchaseRequestDTO implements Serializable {
 
-    private Long id;
 
     @NotNull
     @Email
+    @Schema(
+            description = "Correo electrónico del comprador",
+            example = "usuario@email.com"
+    )
     private String email;
 
     @NotNull
+    @Schema(
+            description = "Identificador del evento para el cual se realiza la compra",
+            example = "200"
+    )
     private Long eventId;
 
     @Valid
-    private BankCardDTO bankCardDTO;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Schema(
+            description = "Datos de la tarjeta bancaria utilizada para el pago"
+    )
+    private BankCardRequestDTO bankCardDTO;
 
 
     public String getEmail() {
@@ -47,11 +50,11 @@ public class PurchaseRequestDTO implements Serializable {
         this.eventId = eventId;
     }
 
-    public BankCardDTO getBankCardDTO() {
+    public BankCardRequestDTO getBankCardDTO() {
         return bankCardDTO;
     }
 
-    public void setBankCardDTO(BankCardDTO bankCardDTO) {
+    public void setBankCardDTO(BankCardRequestDTO bankCardDTO) {
         this.bankCardDTO = bankCardDTO;
     }
 }

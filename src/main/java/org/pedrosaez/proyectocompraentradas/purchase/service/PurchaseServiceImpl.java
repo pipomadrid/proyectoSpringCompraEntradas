@@ -5,17 +5,23 @@ import org.pedrosaez.proyectocompraentradas.feignclients.EventFeignClient;
 import org.pedrosaez.proyectocompraentradas.feignclients.PurchaseValidationFeignClient;
 import org.pedrosaez.proyectocompraentradas.purchase.controller.error.EventNotFoundException;
 import org.pedrosaez.proyectocompraentradas.purchase.controller.error.PurchaseException;
+import org.pedrosaez.proyectocompraentradas.purchase.model.Purchase;
 import org.pedrosaez.proyectocompraentradas.purchase.model.adapter.PaymentRequestAdapter;
 import org.pedrosaez.proyectocompraentradas.purchase.model.request.PaymentRequestDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.model.request.PurchaseRequestDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.model.response.CustomPurchaseResponseDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.model.response.EventDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.model.response.PurchaseResponseDTO;
+import org.pedrosaez.proyectocompraentradas.purchase.repository.PurchaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -34,6 +40,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Autowired
     private LucaBankingTokenService lucaBankingTokenService;
 
+    @Autowired
+    private PurchaseRepository purchaseRepository;
+
 
     @Override
     public CustomPurchaseResponseDTO compraEntradas(PurchaseRequestDTO request) {
@@ -51,8 +60,18 @@ public class PurchaseServiceImpl implements PurchaseService {
 
 
         PurchaseResponseDTO purchaseResponseDTO = executePurchaseValidation(paymentRequestDTO);
-        return buildCustomResponse(purchaseResponseDTO);
 
+
+        Purchase purchase = new Purchase();
+        purchase.setEventId(event.getId());
+        purchase.setCustomerName(purchaseResponseDTO.getInfo().getNombreTitular());
+        purchase.setAmount(new BigDecimal(purchaseResponseDTO.getInfo().getCantidad()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime purchaseTime = LocalDateTime.parse(purchaseResponseDTO.getTimestamp(), formatter);
+        purchase.setPurchaseDate(purchaseTime);
+        purchaseRepository.save(purchase);
+
+        return buildCustomResponse(purchaseResponseDTO);
 
     }
 

@@ -2,15 +2,15 @@ package org.pedrosaez.proyectocompraentradas.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.pedrosaez.proyectocompraentradas.purchase.model.response.BankCardDTO;
+import org.pedrosaez.proyectocompraentradas.purchase.model.request.BankCardRequestDTO;
 
 import java.time.YearMonth;
 
-public class BankCardExpiryDateValidator implements ConstraintValidator<ValidBankCardExpiryDate, BankCardDTO> {
+public class BankCardExpiryDateValidator implements ConstraintValidator<ValidBankCardExpiryDate, BankCardRequestDTO> {
 
 
     @Override
-    public boolean isValid(BankCardDTO bankCard, ConstraintValidatorContext context) {
+    public boolean isValid(BankCardRequestDTO bankCard, ConstraintValidatorContext context) {
         if (bankCard.getExpiryMonth() == null || bankCard.getExpiryYear() == null) {
             return false;
         }

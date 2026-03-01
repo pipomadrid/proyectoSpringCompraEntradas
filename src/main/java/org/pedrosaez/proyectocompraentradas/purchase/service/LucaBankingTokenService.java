@@ -1,7 +1,5 @@
 package org.pedrosaez.proyectocompraentradas.purchase.service;
 
-import com.netflix.discovery.converters.Auto;
-import org.pedrosaez.proyectocompraentradas.feignclients.EventFeignClient;
 import org.pedrosaez.proyectocompraentradas.feignclients.PurchaseValidationFeignClient;
 import org.pedrosaez.proyectocompraentradas.purchase.config.LucaBankingProperties;
 import org.pedrosaez.proyectocompraentradas.purchase.model.response.AuthResponseDTO;
@@ -11,12 +9,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class LucaBankingTokenService {
 
-    @Autowired
     private PurchaseValidationFeignClient purchaseValidationFeignClient;
 
-    @Autowired
     private final LucaBankingProperties properties;
 
+    @Autowired
+    public LucaBankingTokenService(LucaBankingProperties properties, PurchaseValidationFeignClient purchaseValidationFeignClient) {
+        this.properties = properties;
+        this.purchaseValidationFeignClient = purchaseValidationFeignClient;
+    }
 
     private String cachedToken;
 

@@ -1,10 +1,9 @@
 package org.pedrosaez.proyectocompraentradas.purchase.model.adapter;
 
 
-import org.jspecify.annotations.NonNull;
 import org.pedrosaez.proyectocompraentradas.purchase.model.request.PaymentRequestDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.model.request.PurchaseRequestDTO;
-import org.pedrosaez.proyectocompraentradas.purchase.model.response.BankCardDTO;
+import org.pedrosaez.proyectocompraentradas.purchase.model.request.BankCardRequestDTO;
 import org.pedrosaez.proyectocompraentradas.purchase.model.response.EventDTO;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PaymentRequestAdapter {
 
     public PaymentRequestDTO toPaymentRequestDTO(PurchaseRequestDTO request, EventDTO event) {
-        BankCardDTO bankCardDTO = request.getBankCardDTO();
+        BankCardRequestDTO bankCardDTO = request.getBankCardDTO();
 
         PaymentRequestDTO  paymentRequestDTO = new PaymentRequestDTO();
         paymentRequestDTO.setNombreTitular(bankCardDTO.getOwnerName());

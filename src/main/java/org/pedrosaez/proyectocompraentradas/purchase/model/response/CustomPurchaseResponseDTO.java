@@ -1,10 +1,32 @@
 package org.pedrosaez.proyectocompraentradas.purchase.model.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Respuesta generada tras procesar una compra de entradas")
 public class CustomPurchaseResponseDTO {
 
+    @Schema(
+            description = "Mensaje informativo sobre el resultado de la compra",
+            example = "Compra realizada correctamente"
+    )
     private String mensaje;
+
+    @Schema(
+            description = "Nombre del evento para el cual se realizó la compra",
+            example = "Concierto de Rock 2026"
+    )
     private String evento;
+
+    @Schema(
+            description = "Cantidad de entradas adquiridas",
+            example = "2"
+    )
     private String cantidad;
+
+    @Schema(
+            description = "Fecha en la que se realizó la compra",
+            example = "2026-03-01T18:30:00"
+    )
     private String fechaCompra;
 
 

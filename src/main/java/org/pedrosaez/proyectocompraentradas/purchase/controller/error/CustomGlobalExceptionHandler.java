@@ -1,6 +1,7 @@
 package org.pedrosaez.proyectocompraentradas.purchase.controller.error;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.pedrosaez.proyectocompraentradas.purchase.model.response.ErrorResponseDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -21,7 +23,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(EventNotFoundException.class)
     public ResponseEntity<Object> springHandleNotFound(EventNotFoundException ex,
-                                                                HttpServletRequest request) {
+                                                       HttpServletRequest request) {
         logger.info("------ springHandleNotFound()");
 
         Map<String, Object> body = new LinkedHashMap<>();
@@ -32,7 +34,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("autor", "Pedro");
         body.put("empresa", "Accenture");
 
-        return new ResponseEntity<Object>(body,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<Object>(body, HttpStatus.NOT_FOUND);
     }
 
     @Override
@@ -85,16 +87,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(PurchaseException.class)
-    public ResponseEntity<Map<String, Object>> handlePurchaseException(PurchaseException ex) {
+    public ResponseEntity<ErrorResponseDTO> handlePurchaseException(PurchaseException ex, HttpServletRequest request) {
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("code", ex.getCode());
-        body.put("message", ex.getMessage());
+        ErrorResponseDTO error = new ErrorResponseDTO(ex.getStatus(), ex.getCode(), ex.getMessage(), LocalDateTime.now(), request.getRequestURI());
 
         HttpStatus status = ex.getCode().startsWith("400")
                 ? HttpStatus.BAD_REQUEST
                 : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        return new ResponseEntity<>(body, status);
+        return new ResponseEntity<>(error, status);
     }
 }

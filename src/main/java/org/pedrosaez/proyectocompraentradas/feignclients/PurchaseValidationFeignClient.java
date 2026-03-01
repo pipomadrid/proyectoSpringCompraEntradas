@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "banco", url= "http://lucabanking.us-east-1.elasticbeanstalk.com")
 public interface PurchaseValidationFeignClient {
 
+
     // Compra sin validacion
     @PostMapping(value = "/pasarela/compra", consumes = "application/json")
     PurchaseResponseDTO purchase( @RequestBody PaymentRequestDTO request);

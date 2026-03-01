@@ -1,23 +1,28 @@
 package org.pedrosaez.proyectocompraentradas.purchase.model.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
-public class CBResponse implements Serializable {
+@Schema(description = "Respuesta generada tras la activaciónd e Circuit Breaker")
+public class CBResponseDTO implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "Mensaje descriptivo del error", example = "Servicio temporalmente no disponible ")
     private String message;
+
+    @Schema(description = "Información adicional del error", example = "500 ERROR ")
     private HttpStatus info;
 
 
-    public CBResponse() {
+    public CBResponseDTO() {
         super();
     }
 
-    public CBResponse(String message, HttpStatus info) {
+    public CBResponseDTO(String message, HttpStatus info) {
         super();
         this.message = message;
         this.info = info;
